@@ -1,0 +1,168 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="initial-scale=1, maximum-scale=1, user-scalable=no, width=device-width">
+    <title></title>
+
+    <link rel="manifest" href="manifest.json">
+
+    <!-- un-comment this code to enable service worker
+    <script>
+      if ('serviceWorker' in navigator) {
+        navigator.serviceWorker.register('service-worker.js')
+          .then(() => console.log('service worker installed'))
+          .catch(err => console.log('Error', err));
+      }
+    </script>-->
+
+    <link href="lib/ionic/css/ionic.css" rel="stylesheet">
+    <link href="css/style.css" rel="stylesheet">
+
+    <!-- IF using Sass (run gulp sass first), then uncomment below and remove the CSS includes above
+    <link href="css/ionic.app.css" rel="stylesheet">
+    -->
+
+    <!-- ionic/angularjs js -->
+    <script src="lib/ionic/js/ionic.bundle.js"></script>
+
+    <script src="lib/angular-local-storage/dist/angular-local-storage.js"></script>
+
+    <!-- cordova script (this will be a 404 during development) -->
+    <script src="cordova.js"></script>
+
+    <!-- your app's js -->
+    <script src="js/app.js"></script>
+</head>
+
+<body ng-app="AgriMarket" ng-controller="main" ng-init="getData()">
+
+    <ion-modal-view>
+        <ion-header-bar class="bar bar-header positive" style="background:cornflowerblue;  min-height: 60px;">
+            <h1 class="title" style="color: black;font-size: 22px;"><b>AgriMarketRates</b></h1>
+            <div class="buttons">
+                <button class="button button-icon ion-android-more-vertical" ng-click="openModifySelectionModal()"></button>
+            </div>
+        </ion-header-bar>
+        <ion-content style="background:lightblue;">
+
+            <div class="card custom-card" ng-repeat="agri in agriData">
+                <div class="item item-divider item-icon-right " style="background:black;color: white;">
+                    <b>{{agri.commodityName}}</b>
+                    <div class="icon">
+                        <button class="button button-icon ion-android-cancel"></button>
+                    </div>
+                </div>
+                <div class="item item-text-wrap" style="background:#ffffff;">
+                    <ion-list type="list">
+                        <ion-item ng-repeat="data in agri.commodityData">
+                            <ion-list type="list">
+                                <div class="item item-divider text-center">
+                                    <b>{{data.marketName}}</b>
+                                </div>
+
+                                <div class="item" ng-repeat="mData in data.marketData">
+                                    {{mData.Variety}}:
+                                    <span class="item-note">
+                                  {{mData["Minimum Price"]}}-{{mData["Maximum Price"]}} {{mData["Unit of Price"]}}
+                                </span>
+                                </div>
+                            </ion-list>
+                        </ion-item>
+                        <ion-item ng-show="!agri.commodityData.length">
+                            <div class="item">
+                                {{agri.commodityName}} price not found!
+                            </div>
+                        </ion-item>
+
+                    </ion-list>
+
+                </div>
+            </div>
+
+        </ion-content>
+    </ion-modal-view>
+
+    <script id='commodityList.html' type="text/ng-template">
+        <ion-modal-view>
+            <ion-header-bar class="bar-positive">
+                <button class="button button-positive button-icon ion-ios-arrow-back" ng-click="setSelectedCommodites()" />
+                <h1 class="title">Select your commodities</h1>
+                <button class="button button-positive button-icon ion-checkmark" ng-click="setSelectedCommodites()" />
+            </ion-header-bar>
+
+            <ion-content>
+                <ion-list>
+                    <ion-item>
+                        <label class="item item-input">
+                            <input type="text" placeholder="search your commodity" ng-model="input.searchInput">
+                        </label>
+                    </ion-item>
+                    <ion-item class="item-checkbox" collection-repeat="item in commodityList | filter:input.searchInput">
+                        <div class="row">
+                            <div class="col col-25">
+                                <label class="checkbox">
+                                    <input type="checkbox" ng-checked="item.isSelected" ng-model="item.isSelected">
+                                </label>
+                            </div>
+                            <div class="col col-75">
+                                <b>{{item.value}}</b>
+                            </div>
+                        </div>
+
+                    </ion-item>
+                </ion-list>
+            </ion-content>
+        </ion-modal-view>
+    </script>
+
+
+    <script id="modal.html" type="text/ng-template">
+        <ion-modal-view>
+            <ion-header-bar class="bar bar-header" style='background:#e3f2fd;'>
+                <h1 class="title"><b>Select</b></h1>
+                <button class="button button-icon ion-android-cancel" ng-click="modal.hide()"></button>
+            </ion-header-bar>
+            <ion-content>
+                <div class="list" style='background:white;'>
+                    <ion-item style='background-color:white;'>
+                        State:
+                    </ion-item>
+                    <ion-item style='background-color:white;'>
+                        <select style='background-color:white;width:100%;min-height:30px;' name="selectedState" ng-change="onStateSelectionChanged(selectedStateIndex)" ng-options="stateList.indexOf(selectedStateIndex) as selectedStateIndex.value for selectedStateIndex in stateList"
+                            ng-model="selectedStateIndex">
+                        </select>
+                    </ion-item>
+
+                    <ion-item style='background-color:white;'>
+                        District:
+                    </ion-item>
+                    <ion-item style='background-color:white;'>
+                        <select style='background-color:white;width:100%;min-height:30px;' name="selectedDistrict" ng-change="onDistrictSelectionChanged(selectedDistrict)" ng-options="district.value for district in districtList" ng-model="selectedDistrict">
+                        </select>
+                    </ion-item>
+                    <ion-item style='background-color:white;'>
+                        Selected Commodities:
+                    </ion-item>
+                    <ion-item style='background-color:white;'>
+                        <div class="row">
+                            <div class="col col-90">
+                                <ul>
+                                    <li ng-repeat="commodity in selectedCommodities">{{commodity.value}}
+                                    </li>
+                                </ul>
+                            </div>
+                            <div class="col col-10">
+                                <a ng-click="openCommodityModel()">Edit</a>
+                            </div>
+                        </div>
+                    </ion-item>
+                    <button class="button button-full button-positive " ng-click="onSubmissionOfSelection() ">Submit</button>
+                </div>
+            </ion-content>
+        </ion-modal-view>
+    </script>
+</body>
+
+</html>

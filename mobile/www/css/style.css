@@ -1,0 +1,23 @@
+/* Empty. Add your own CSS if you like */
+
+.title {
+    font-family: Aclonica;
+}
+
+.card .custom-card {
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.3);
+    background: #ffffff;
+}
+
+.item-note {
+    color: black;
+}
+
+.item {
+    background: #ffffff;
+    color: black;
+}
+
+.popup-head {
+    background-color: red;
+}
