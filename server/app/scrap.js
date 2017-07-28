@@ -1,4 +1,4 @@
-exports.getScrapedCropWiseData = function(data, commodityList) {
+exports.getScrapedCropWisePriceDataForMobile = function(data, commodityList) {
     var marketName = '';
     var commodityName = '';
     data[0].forEach(function(x) {
@@ -54,6 +54,47 @@ exports.getScrapedCropWiseData = function(data, commodityList) {
         });
 
         requestedCommodityList.push({ "commodityName": commodityName, "commodityData": marketWiseCommodity });
+    });
+
+    return requestedCommodityList;
+}
+
+
+exports.getScrapedCropWisePriceDataForWeb = function(data, commodityList) {
+    var marketName = '';
+    var commodityName = '';
+    data[0].forEach(function(x) {
+        if (x.Market == '') {
+            x.Market = marketName;
+        } else {
+            marketName = x.Market;
+        }
+        if (x.Commodity == '') {
+            x.Commodity = commodityName;
+        } else {
+            commodityName = x.Commodity;
+        }
+    });
+    var selectedCommodity = [];
+    data[0].forEach(function(y) {
+
+        if (commodityList.indexOf(y.Commodity) != -1) {
+            selectedCommodity.push(y);
+        }
+    });
+
+    var requestedCommodityList = [];
+
+    var marketNameList = [];
+    commodityList.forEach(function(commodityName) {
+        var tempCommodity = [];
+        selectedCommodity.forEach(function(commodity) {
+            if (commodityName == commodity.Commodity) {
+                tempCommodity.push(commodity);
+            }
+        });
+
+        requestedCommodityList.push({ "commodityName": commodityName, "commodityData": tempCommodity });
     });
 
     return requestedCommodityList;

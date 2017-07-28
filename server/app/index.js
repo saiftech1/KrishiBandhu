@@ -11,14 +11,37 @@ var url = 'http://agmarknet.nic.in/agnew/NationalBEnglish/MarketwiseSpecificComm
 app.use(bodyParser.urlencoded({ extended: true }));
 app.use(bodyParser.json());
 
-app.get('/getCropWisePrices/:stateId/:districtId', (req, res) => {
+app.use(function(req, res, next) {
+    res.header("Access-Control-Allow-Origin", "*");
+    res.header("Access-Control-Allow-Headers", "Origin, X-Requested-With, Content-Type, Accept");
+    next();
+});
+
+
+app.get('/getCropWisePricesDataForMobile/:stateId/:districtId', (req, res) => {
     var crops = req.query.array.split(',');
     rp({ url: url + req.params.stateId + '&&district1=' + req.params.districtId }).then(function(html) {
             console.log("Data received");
             var $ = cheerio.load(html);
             const jsonTables = new HtmlTableToJson($('#TABLE1 tbody tr td div').html());
             var data = jsonTables.results;
-            res.json(scraper.getScrapedCropWisePrices(data, crops));
+            res.json(scraper.getScrapedCropWisePriceDataForMobile(data, crops));
+        })
+        .catch(function(error) {
+            console.log("Error occured:", error);
+            res.send(error);
+        })
+
+});
+
+app.get('/getCropWisePricesDataForWeb/:stateId/:districtId', (req, res) => {
+    var crops = req.query.array.split(',');
+    rp({ url: url + req.params.stateId + '&&district1=' + req.params.districtId }).then(function(html) {
+            console.log("Data received");
+            var $ = cheerio.load(html);
+            const jsonTables = new HtmlTableToJson($('#TABLE1 tbody tr td div').html());
+            var data = jsonTables.results;
+            res.json(scraper.getScrapedCropWisePriceDataForWeb(data, crops));
         })
         .catch(function(error) {
             console.log("Error occured:", error);
@@ -28,4 +51,4 @@ app.get('/getCropWisePrices/:stateId/:districtId', (req, res) => {
 });
 
 
-app.listen(3000);
+app.listen(8000);
