@@ -1,0 +1,190 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <meta http-equiv="x-ua-compatible" content="ie=edge">
+
+    <title>KrishiBandhu | Real Time Commodity Price</title>
+
+    <link rel="stylesheet" type="text/css" href="node_modules/chosen-js/chosen.css" />
+
+    <!-- JQuery -->
+    <script type="text/javascript" src="node_modules/mdbootstrap/js/jquery-2.2.3.min.js"></script>
+
+    <script type="text/javascript" src="node_modules/chosen-js/chosen.jquery.js">
+    </script>
+
+    <!-- Font Awesome -->
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/font-awesome/4.6.0/css/font-awesome.min.css">
+
+    <!-- Bootstrap core CSS -->
+    <link href="node_modules/mdbootstrap/css/bootstrap.css" rel="stylesheet">
+
+    <!-- Material Design Bootstrap -->
+    <link href="node_modules/mdbootstrap/css/mdb.min.css" rel="stylesheet">
+
+    <!-- Your custom styles (optional) -->
+    <link href="node_modules/mdbootstrap/css/style.css" rel="stylesheet">
+
+
+    <style>
+        .loader {
+            position: fixed;
+            left: 0px;
+            top: 0px;
+            width: 100%;
+            height: 100%;
+            z-index: 9999;
+            background: url('loading.gif') 50% 50% no-repeat rgb(249, 249, 249);
+        }
+    </style>
+
+
+
+</head>
+
+<body ng-app="krishiBandhu" style="background-color:darkgreen;">
+
+
+    <!-- Start your project here-->
+
+    <!--Start your project here-->
+    <div class="container" ng-controller="AppCtrl" ng-init="init()">
+        <span us-spinner="{radius:30, width:8, length: 16}" spinner-key="spinner-1"></span>
+        <span us-spinner="{radius:30, width:8, length: 16}" spinner-key="spinner-2"></span>
+        <div ng-hide="pageLoaded" style="height: 100%;width: 100%;">
+            <div class="loader"></div>
+        </div>
+        <div class="row" ng-show="pageLoaded">
+
+            <div class="col-12" style="padding: 50px 0 50px 0;">
+
+                <!--Form with header-->
+                <div class="card" style="min-height: 80vh;">
+                    <div class="card-header primary-color-dark white-text">
+                        <b>KrishiBandhu</b>
+                    </div>
+                    <div class="card-block" style="background-color: white;">
+
+
+                        <!--Body-->
+
+                        <div class="card">
+
+                            <div class="card-block">
+                                <div class="row">
+                                    <div class="col-3">
+                                        <label><b>State:</b></label>
+                                        <select width=150 chosen disable-search=true name="selectedState" ng-change="onStateSelectionChanged(selectedStateIndex)" ng-options="stateList.indexOf(selectedStateIndex) as selectedStateIndex.value for selectedStateIndex in stateList" ng-model="selectedStateIndex">
+                                        
+                                        </select>
+                                    </div>
+                                    <div class="col-3">
+                                        <label><b>District:</b></label>
+                                        <select width=150 chosen disable-search=true id="district" name="selectedDistrict" ng-change="onDistrictSelectionChanged(selectedDistrict)" ng-options="district.value for district in districtList" ng-model="selectedDistrict">
+                                        </select>
+                                    </div>
+                                    <div class="col-5">
+                                        <label><b>Commodity:</b></label>
+                                        <select width=330 chosen multiple id="commodity" ng-options="c.value as c.value for c in commodityList" ng-model="selected" ng-change="onCommoditySelected(selected)">
+                                        </select>
+                                    </div>
+
+                                    <div class="col-1">
+                                        <button type="button" class="btn btn-primary" style="padding: 8px;margin: 0;" ng-click="onSubmissionOfSelection()">
+                                            <b>Submit</b>
+                                        </button>
+                                    </div>
+                                </div>
+                            </div>
+
+                        </div>
+
+                        <hr>
+
+                        <div class="card" ng-repeat="commodity in agriData">
+                            <div class="card-header black-text">
+                                <b>{{commodity.commodityName}}</b>
+                            </div>
+                            <div class="card-block" style="color: black;background-color: lightgray">
+                                <table class="table">
+                                    <thead>
+                                        <tr>
+                                            <th>Market</th>
+                                            <th>Variety</th>
+                                            <th>Arrivals</th>
+                                            <th>Unit of Arrivals</th>
+                                            <th>Minimum Price</th>
+                                            <th>Maximum Price</th>
+                                            <th>Modal Price</th>
+                                            <th>Unit of Price</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <tr ng-repeat="commodityData in commodity.commodityData">
+                                            <td>{{commodityData.Market}}</td>
+                                            <td>{{commodityData.Variety}}</td>
+                                            <td>{{commodityData.Arrivals}}</td>
+                                            <td>{{commodityData["Unit of Arrivals"]}}</td>
+                                            <td>{{commodityData["Minimum Price"]}}</td>
+                                            <td>{{commodityData["Maximum Price"]}}</td>
+                                            <td>{{commodityData["Modal Price"]}}</td>
+                                            <td>{{commodityData["Unit of Price"]}}</td>
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+
+
+
+                    </div>
+                    <div class="card-footer text-muted black-text">
+                        <p style="font-size: 10px;">DarshanHegde</p>
+                    </div>
+
+
+
+                </div>
+                <!--/Form with header-->
+
+            </div>
+        </div>
+    </div>
+    <!--/Start your project here-->
+
+    <!-- SCRIPTS -->
+
+
+
+
+
+    <!-- Bootstrap tooltips -->
+    <script type="text/javascript" src="node_modules/mdbootstrap/js/tether.min.js"></script>
+
+    <!-- Bootstrap core JavaScript -->
+    <script type="text/javascript" src="node_modules/mdbootstrap/js/bootstrap.min.js"></script>
+
+    <!-- MDB core JavaScript -->
+    <script type="text/javascript" src="node_modules/mdbootstrap/js/mdb.min.js"></script>
+
+
+    <script type="text/javascript" src="node_modules/angular/angular.min.js"></script>
+
+    <script type="text/javascript" src="node_modules/angular-cookies/angular-cookies.min.js"></script>
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/angular-chosen-localytics/1.7.0/angular-chosen.min.js"></script>
+
+    <script src="node_modules/angular-spinner/dist/angular-spinner.min.js"></script>
+    <script type="text/javascript" src="js/app.js"></script>
+
+    <script type="text/javascript" src="js/controller.js"></script>
+
+    <script type="text/javascript" src="js/services.js"></script>
+
+</body>
+
+</html>
